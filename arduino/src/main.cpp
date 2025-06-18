@@ -3,6 +3,7 @@
 #include "MessageHandler.h"  
 #include "ScreenConfig.h"
 #include "WebServerConfig.h"
+#include "Config.h"  
 
 #include <EEPROM.h>
 #include <Arduino.h>
@@ -10,13 +11,13 @@
 #define CAPACITIVE_PIN D6
 #define RESET_HOLD_TIME 3000
 
-const char* serverUrl = "http://192.168.1.174:3000/api/message";
-MessageHandler messageHandler(serverUrl);  
+
+MessageHandler messageHandler(SERVER_URL);  
 
 // Function to check for reset button hold before setup
 void checkForResetBeforeSetup() {
-    unsigned long buttonPressTime = 0; // Track how long the button is pressed
-    pinMode(CAPACITIVE_PIN, INPUT);    // Set pin mode
+    unsigned long buttonPressTime = 0; 
+    pinMode(CAPACITIVE_PIN, INPUT);    
 
     Serial.println("Checking for reset button hold...");
 
@@ -56,15 +57,7 @@ void setup() {
         displayConnectingFromSaved();
         delay(2000);
         if (connectToWiFi(ssid.c_str(), password.c_str())) {
-             WiFiClient testClient;
-            if (testClient.connect("192.168.1.174", 3000)) {  
-                Serial.println("Basic TCP connection successful");
-                testClient.stop();
-            } else {
-                Serial.println("Basic TCP connection failed");
-            }
             String welcomeMsg = messageHandler.fetchMessage();
-            Serial.println("Connected to Wi-Fi (in loop): " + ssid);
             if (!welcomeMsg.isEmpty()) {
                 Serial.println("Received Message: " + welcomeMsg);
             }    
@@ -80,7 +73,7 @@ void loop() {
     handleWebServer();
     
     static unsigned long lastCheck = 0;
-    if (millis() - lastCheck > 5000 && WiFi.status() == WL_CONNECTED) {
+    if (millis() - lastCheck > 10000 && WiFi.status() == WL_CONNECTED) {
         String newMessage = messageHandler.fetchMessage();
         if (!newMessage.isEmpty()) {
             Serial.println("New Message: " + newMessage);
