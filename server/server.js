@@ -1,24 +1,23 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
+
+const authRoutes = require("./routes/auth");
+const deviceRoutes = require("./routes/device");
+const messageRoutes = require("./routes/messages");
 
 const app = express();
-app.use(bodyParser.json());
+app.use(cors());
+app.use(express.json());
 
-let message = "Hello from Lovebox!"; // Default message
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/device", deviceRoutes);
+app.use("/api/messages", messageRoutes);
 
-// GET: Retrieve the current message
-app.get("/api/message", (req, res) => {
-  console.log("✅ Request received from:", req.ip);
-  res.json({ message });
-});
-
-// POST: Update the message
-app.post("/api/message", (req, res) => {
-  message = req.body.message || message;
-  res.json({ success: true, newMessage: message });
-});
-
-const PORT = 3000;
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+// Connect to MongoDB and start server
+mongoose.connect(process.env.MONGODB_URI).then(() => {
+  console.log("Connected to MongoDB");
+  app.listen(3000, () => console.log("Server running on port 3000"));
 });
