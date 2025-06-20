@@ -6,7 +6,8 @@ const router = express.Router();
 router.post("/login", async (req, res) => {
   const { deviceId, password } = req.body;
   const user = await User.findOne({ deviceId });
-  if (!user || password !== "supersecret") {
+  const isMatch = bcrypt.compare(password, user.passwordHash);
+  if (!user || !isMatch) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
