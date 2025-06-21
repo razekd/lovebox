@@ -26,35 +26,26 @@ router.post("/send", authMiddleware, async (req, res) => {
 });
 
 // Mark message as read
-router.get("/messages/:id/read", authMiddleware, async (req, res) => {
+router.patch("/messages/:id/read", authMiddleware, async (req, res) => {
   const { id } = req.params;
-  return res.json({ success: true, id: id });
   try {
-    const message = await Message.findOne({ _id: ObjectId(id) });
-    if (!message) return res.status(404).json({ error: "Message not found" });
-    if (message.to !== req.user.username)
+    const message = await Message.findById(id);
+
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    if (message.to !== req.user.username) {
       return res.status(403).json({ error: "Unauthorized" });
+    }
 
     message.read = true;
     await message.save();
 
-    message = await Message.findOneAndUpdate(
-      {
-        _id: new ObjectId(req.params.id),
-        to: req.user.username,
-      },
-      { $set: { read: true } },
-      { new: true }
-    );
-
-    if (!message)
-      return res
-        .status(404)
-        .json({ error: "Message not found or unauthorized" });
-
-    res.json(message);
+    return res.json({ success: true, message });
   } catch (err) {
-    return res.status(500).json({ error: "Error fetching message" });
+    console.error(err); // Log the actual error
+    return res.status(500).json({ error: "Error updating message" });
   }
 });
 
@@ -64,7 +55,7 @@ router.get("/unread", authMiddleware, async (req, res) => {
     const messages = await Message.find({
       to: req.user.username,
       read: false,
-    }).sort({ timestamp: -1 });
+    }).sort({ timestamp: 1 });
 
     res.json({
       messages,
