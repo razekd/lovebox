@@ -26,7 +26,7 @@ router.post("/send", authMiddleware, async (req, res) => {
 });
 
 // Mark message as read
-router.patch("/messages/:id/read", authMiddleware, async (req, res) => {
+router.patch("/:id/read", authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
     const message = await Message.findById(id);
@@ -44,7 +44,7 @@ router.patch("/messages/:id/read", authMiddleware, async (req, res) => {
 
     return res.json({ success: true, message });
   } catch (err) {
-    console.error(err); // Log the actual error
+    console.error(err);
     return res.status(500).json({ error: "Error updating message" });
   }
 });
