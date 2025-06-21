@@ -26,13 +26,17 @@ router.post("/send", authMiddleware, async (req, res) => {
 router.patch("/messages/:id/read", authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
-    const message = await Message.findById(id);
+    const message = await Message.findById(new ObjectId(id));
     if (!message) return res.status(404).json({ error: "Message not found" });
     if (message.to !== req.user.username)
       return res.status(403).json({ error: "Unauthorized" });
 
     message.read = true;
     await message.save();
+    return res.json({
+      success: true,
+      message: "Marked as read",
+    });
   } catch (err) {
     return res.status(500).json({ error: "Error fetching message" });
   }
