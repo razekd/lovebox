@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const Message = require("../models/Message");
 const router = express.Router();
 
+const ObjectId = mongoose.Types.ObjectId;
+
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ error: "No token" });
@@ -33,10 +35,22 @@ router.patch("/messages/:id/read", authMiddleware, async (req, res) => {
 
     message.read = true;
     await message.save();
-    return res.json({
-      success: true,
-      message: "Marked as read",
-    });
+
+    message = await Message.findOneAndUpdate(
+      {
+        _id: new ObjectId(req.params.id),
+        to: req.user.username,
+      },
+      { $set: { read: true } },
+      { new: true }
+    );
+
+    if (!message)
+      return res
+        .status(404)
+        .json({ error: "Message not found or unauthorized" });
+
+    res.json(message);
   } catch (err) {
     return res.status(500).json({ error: "Error fetching message" });
   }
