@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const Message = require("../models/Message");
 const router = express.Router();
 
+const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
 const authMiddleware = (req, res, next) => {
