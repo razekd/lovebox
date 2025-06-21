@@ -28,8 +28,9 @@ router.post("/send", authMiddleware, async (req, res) => {
 // Mark message as read
 router.get("/messages/:id/read", authMiddleware, async (req, res) => {
   const { id } = req.params;
+
   try {
-    const message = await Message.findById(new ObjectId(id));
+    const message = await Message.findOne({ _id: ObjectId(id) });
     if (!message) return res.status(404).json({ error: "Message not found" });
     if (message.to !== req.user.username)
       return res.status(403).json({ error: "Unauthorized" });
