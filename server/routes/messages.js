@@ -26,7 +26,7 @@ router.post("/send", authMiddleware, async (req, res) => {
 });
 
 // Mark message as read
-router.patch("/messages/:id/read", authMiddleware, async (req, res) => {
+router.get("/messages/:id/read", authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
     const message = await Message.findById(new ObjectId(id));
