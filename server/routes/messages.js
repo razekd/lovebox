@@ -23,16 +23,13 @@ router.post("/send", authMiddleware, async (req, res) => {
 });
 
 // Mark message as read
-router.get("/mark-read/:id", authMiddleware, async (req, res) => {
+router.patch("/messages/:id/read", authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
     const message = await Message.findById(id);
-    if (!message) {
-      return res.status(404).json({ error: "Message not found" });
-    }
-    if (message.to !== req.user.username) {
+    if (!message) return res.status(404).json({ error: "Message not found" });
+    if (message.to !== req.user.username)
       return res.status(403).json({ error: "Unauthorized" });
-    }
 
     message.read = true;
     await message.save();
