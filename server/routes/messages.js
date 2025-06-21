@@ -66,4 +66,24 @@ router.get("/unread", authMiddleware, async (req, res) => {
   }
 });
 
+// Fetch latest message for the user (by timestamp)
+
+router.get("/latest", authMiddleware, async (req, res) => {
+  try {
+    const latestMessage = await Message.findOne({
+      to: req.user.username,
+    })
+      .sort({ timestamp: -1 })
+      .limit(1);
+
+    if (!latestMessage) {
+      return res.status(404).json({ error: "No messages found" });
+    }
+
+    res.json(latestMessage);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching latest message" });
+  }
+});
+
 module.exports = router;
