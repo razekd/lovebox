@@ -3,9 +3,6 @@ const jwt = require("jsonwebtoken");
 const Message = require("../models/Message");
 const router = express.Router();
 
-const mongoose = require("mongoose");
-const ObjectId = mongoose.Types.ObjectId;
-
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ error: "No token" });
@@ -20,8 +17,8 @@ const authMiddleware = (req, res, next) => {
 
 // Web user sends message
 router.post("/send", authMiddleware, async (req, res) => {
-  const { to, text } = req.body;
-  await Message.create({ to, from: req.user.username, text });
+  const { to, text, title } = req.body;
+  await Message.create({ to, from: req.user.username, text, title });
   res.json({ success: true });
 });
 
