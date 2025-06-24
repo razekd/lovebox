@@ -17,8 +17,8 @@ const authMiddleware = (req, res, next) => {
 
 // Web user sends message
 router.post("/send", authMiddleware, async (req, res) => {
-  const { to, text, title } = req.body;
-  await Message.create({ to, from: req.user.username, text, title });
+  const { to, text, title, animated } = req.body;
+  await Message.create({ to, from: req.user.username, text, title, animated });
   res.json({ success: true });
 });
 
