@@ -23,8 +23,9 @@ router.post("/status", async (req, res) => {
   if (!token) return res.status(401).json({ error: "Missing token" });
 
   try {
+    const utcNow = new Date(Date.now());
     const { username } = jwt.verify(token, process.env.JWT_SECRET);
-    await User.updateOne({ username }, { lastSeen: new Date() });
+    await User.updateOne({ username }, { lastSeen: utcNow });
     res.json({ ok: true });
   } catch {
     res.status(401).json({ error: "Invalid token" });
