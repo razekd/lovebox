@@ -16,6 +16,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/device", deviceRoutes);
 app.use("/api/messages", messageRoutes);
 
+process.env.TZ = "UTC";
+
 // Connect to MongoDB and start server
 mongoose.connect(process.env.MONGODB_URI).then(() => {
   console.log("Connected to MongoDB");
