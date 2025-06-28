@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Form,
   FormControl,
@@ -30,10 +30,16 @@ const formSchema = z.object({
 });
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (username: string, password: string) => {
     try {
@@ -71,6 +77,14 @@ const LoginPage = () => {
     // Clear error when user makes a selection
     if (error) setError('');
   };
+
+  if (user) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Redirecting...
+      </div>
+    );
+  }
 
   return (
     <Card className="max-w-md mx-auto mt-10 p-6">
