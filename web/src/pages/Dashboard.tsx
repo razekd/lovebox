@@ -12,7 +12,7 @@ import { useAuth } from '@/auth/AuthProvider';
 const Dashboard = () => {
   const { user } = useAuth();
   return (
-    <div className="flex flex-col items-center justify-between max-w-md mx-auto space-y-4 mt-10">
+    <div className="flex flex-col items-center justify-between max-w-md space-y-4 mt-10 mx-10 sm:mx-auto">
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-2xl">

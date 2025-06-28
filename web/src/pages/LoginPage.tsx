@@ -87,7 +87,7 @@ const LoginPage = () => {
   }
 
   return (
-    <Card className="max-w-md mx-auto mt-10 p-6">
+    <Card className="max-w-md mx-10 sm:mx-auto mt-10 p-6">
       <CardHeader className="text-center">
         <h2 className="text-2xl font-bold">Login to your dashboard</h2>
       </CardHeader>
